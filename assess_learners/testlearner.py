@@ -28,7 +28,9 @@ import sys
   		  	   		 	   		  		  		    	 		 		   		 		  
 import numpy as np  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
-import LinRegLearner as lrl  		  	   		 	   		  		  		    	 		 		   		 		  
+import LinRegLearner as lrl
+import DTLearner as dt
+import RTLearner as rt
   		  	   		 	   		  		  		    	 		 		   		 		  
 if __name__ == "__main__":  		  	   		 	   		  		  		    	 		 		   		 		  
     if len(sys.argv) != 2:  		  	   		 	   		  		  		    	 		 		   		 		  
