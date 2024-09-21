@@ -66,7 +66,7 @@ if __name__ == "__main__":
     # Question 1: Experiment 1 - DTLearner
     rmse_in_sample = []
     rmse_out_sample = []
-    for i in range(1, 51):
+    for i in range(1, 101):
         # create a learner and train it
         learner = dt.DTLearner(leaf_size=i, verbose=True)
         learner.add_evidence(train_x, train_y)
@@ -81,16 +81,18 @@ if __name__ == "__main__":
     # plotting the figure
     plt.plot(rmse_in_sample)
     plt.plot(rmse_out_sample)
-    plt.title("RMSE vs Leaf Size for DTLearner")
+    plt.title("Experiment 1 - RMSE vs Leaf Size for DTLearner")
     plt.xlabel("Leaf Size")
-    plt.xlim(1, 50)
+    plt.xlim(1, 100)
     plt.ylabel("RMSE")
     plt.ylim(0, 0.01)
     plt.legend(["In-Sample", "Out-Sample"])
     plt.savefig("images/Experiment1.png")
     plt.close("all")
 
-    learner = dt.DTLearner(leaf_size=1, verbose=False)  # constructor
+    # Experiment 2 - Bag Learner
+
+    learner = rt.RTLearner(leaf_size=1, verbose=False)  # constructor
     learner.add_evidence(train_x, train_y)  # training step
     print(learner.author())  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
