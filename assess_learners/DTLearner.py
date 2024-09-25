@@ -1,7 +1,6 @@
 import numpy as np
 
 class DTLearner(object):
-
     def __init__(self, leaf_size=1, verbose = False):
         self.leaf_size = leaf_size
         self.verbose = verbose
@@ -14,7 +13,6 @@ class DTLearner(object):
         return('pravikumaran3')
 
     def add_evidence(self, Xtrain, Ytrain):
-        # Process of adding training data to learner and builds decision tree
         self.tree = self.build_tree(Xtrain, Ytrain)
         if self.verbose:
             print("tree built:", self.tree)
@@ -26,11 +24,17 @@ class DTLearner(object):
         best_feature = self.get_best_feature(dataX, dataY)
         split_val = np.median(dataX[:, best_feature])
 
-        if np.all(dataX[:, best_feature] == split_val):
+        if split_val == np.max(dataX[:, best_feature]) or np.all(dataX[:, best_feature] == split_val):
             return np.array([[-1, np.mean(dataY), np.nan, np.nan]])
 
         left_index = dataX[:, best_feature] <= split_val
         right_index = dataX[:, best_feature] > split_val
+
+        if np.sum(right_index) == 0:
+            split_val = np.mean(dataX[:, best_feature])
+            right_index = dataX[:, best_feature] > split_val
+            if np.sum(right_index) == 0:  # If the split still doesn't work
+                return np.array([[-1, np.mean(dataY), np.nan, np.nan]])
 
         left_tree = self.build_tree(dataX[left_index], dataY[left_index])
         right_tree = self.build_tree(dataX[right_index], dataY[right_index])
@@ -40,7 +44,13 @@ class DTLearner(object):
         return np.vstack((root, left_tree, right_tree))
 
     def get_best_feature(self, X, Y):
-        correlations = [abs(np.corrcoef(X[:, i], Y)[0, 1]) for i in range(X.shape[1])]
+        correlations = []
+        for i in range(X.shape[1]):
+            corr = np.corrcoef(X[:, i], Y)[0, 1]
+            if np.isnan(corr):
+                correlations.append(0)  # Assign 0 for NaN
+            else:
+                correlations.append(abs(corr))
         return np.argmax(correlations)
 
     def query(self, Xtest):
