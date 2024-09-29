@@ -150,7 +150,6 @@ def compute_portvals(
     # total_stock_value = stock_values.sum(axis=1)
     # portvals = total_stock_value + portfolio['Cash']
 
-    # return rv
     return portvals
   		  	   		 	   		  		  		    	 		 		   		 		  
 def test_code():  		  	   		 	   		  		  		    	 		 		   		 		  
