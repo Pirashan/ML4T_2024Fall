@@ -87,11 +87,11 @@ def compute_portvals(
     # Trades df with all zeros and changes to stocks/cash
     trades = pd.DataFrame(data=0, columns=prices.columns.values, index=prices.index.values)
 
-    for index, row in orders.iterrows():
-        symbol = row['Symbol']
-        shares = row['Shares']
-        order_type = row['Order']
-        date = index
+    for row in orders.itertuples(index=True):
+        symbol = row.Symbol
+        shares = row.Shares
+        order_type = row.Order
+        date = row.Index
 
         if order_type == "BUY":
             trades.at[date, symbol] += shares
