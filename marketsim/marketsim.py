@@ -76,6 +76,8 @@ def compute_portvals(
     # Get unique symbols
     symbols = list(set(orders['Symbol']))
 
+    # orders -> prices -> trades -> holdings -> values -> portfolio value
+
     # Get prices of symbols
     prices = get_data(symbols, pd.date_range(start_date, end_date)).drop(columns=['SPY'])
     # prices = prices[symbols]
@@ -92,31 +94,31 @@ def compute_portvals(
         date = index
 
         if order_type == "BUY":
-            trades.at[date, symbol] += shares  # Add shares for the symbol
-            # Calculate cash impact for the trade
-            cash_for_trade_impact = -prices.at[date, symbol] * shares
-            # Update cash in trades (account for transaction costs)
-            trades.at[date, "Cash"] += cash_for_trade_impact - (impact * abs(cash_for_trade_impact)) - commission
+            trades.at[date, symbol] += shares
+            # Calculate cash for the trade
+            cash_spent = -1 * prices.at[date, symbol] * shares
+            # Update cash in trades
+            trades.at[date, "Cash"] += cash_spent - (impact * abs(cash_spent)) - commission
 
-        elif order_type == "SELL":
-            trades.at[date, symbol] -= shares  # Subtract shares for the symbol
-            # Calculate cash impact for the trade
-            cash_for_trade_impact = prices.at[date, symbol] * shares
-            # Update cash in trades (account for transaction costs)
-            trades.at[date, "Cash"] += cash_for_trade_impact - (impact * abs(cash_for_trade_impact)) - commission
+        else:
+            trades.at[date, symbol] -= shares
+            # Calculate cash for the trade
+            cash_earned = prices.at[date, symbol] * shares
+            # Update cash in trades
+            trades.at[date, "Cash"] += cash_earned - (impact * cash_earned) - commission
 
     # holdings df
     holdings= pd.DataFrame(data=0, columns=trades.columns.values, index=trades.index.values)
     holdings.iloc[[0]] = trades.iloc[[0]]
     holdings.Cash.iat[0] += start_val
 
-    for i in range(1, holdings.shape[0]):  # Start from the second row
+    for i in range(1, holdings.shape[0]):
         holdings.loc[holdings.index[i]] = holdings.loc[holdings.index[i - 1]] + trades.loc[holdings.index[i]]
 
     values = prices * holdings
-    port_values = values.sum(axis=1)  # used for debugging
+    portvals = values.sum(axis=1)
 
-    return port_values
+    return portvals
 
     # # Portfolio of stocks and cash values
     # portfolio = pd.DataFrame(index=prices.index, columns=symbols + ['Cash'])
@@ -149,8 +151,6 @@ def compute_portvals(
     # stock_values = portfolio[symbols].mul(prices[symbols], axis=0)
     # total_stock_value = stock_values.sum(axis=1)
     # portvals = total_stock_value + portfolio['Cash']
-
-    return portvals
   		  	   		 	   		  		  		    	 		 		   		 		  
 def test_code():  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	   		 	   		  		  		    	 		 		   		 		  
