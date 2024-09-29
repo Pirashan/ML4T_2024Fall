@@ -21,9 +21,9 @@ GT honor code violation.
   		  	   		 	   		  		  		    	 		 		   		 		  
 -----do not edit anything above this line---  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
-Student Name: Tucker Balch (replace with your name)  		  	   		 	   		  		  		    	 		 		   		 		  
-GT User ID: tb34 (replace with your User ID)  		  	   		 	   		  		  		    	 		 		   		 		  
-GT ID: 900897987 (replace with your GT ID)  		  	   		 	   		  		  		    	 		 		   		 		  
+Student Name: Pirashan Ravikumaran  		  	   		 	   		  		  		    	 		 		   		 		  
+GT User ID: pravikumaran3	  	   		 	   		  		  		    	 		 		   		 		  
+GT ID: 903948218		  	   		 	   		  		  		    	 		 		   		 		  
 """  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
 import math  		  	   		 	   		  		  		    	 		 		   		 		  
@@ -33,7 +33,7 @@ import numpy as np
   		  	   		 	   		  		  		    	 		 		   		 		  
 # this function should return a dataset (X and Y) that will work  		  	   		 	   		  		  		    	 		 		   		 		  
 # better for linear regression than decision trees  		  	   		 	   		  		  		    	 		 		   		 		  
-def best_4_lin_reg(seed=1489683273):  		  	   		 	   		  		  		    	 		 		   		 		  
+def best_4_lin_reg(seed=903948218):
     """  		  	   		 	   		  		  		    	 		 		   		 		  
     Returns data that performs significantly better with LinRegLearner than DTLearner.  		  	   		 	   		  		  		    	 		 		   		 		  
     The data set should include from 2 to 10 columns in X, and one column in Y.  		  	   		 	   		  		  		    	 		 		   		 		  
@@ -44,30 +44,48 @@ def best_4_lin_reg(seed=1489683273):
     :return: Returns data that performs significantly better with LinRegLearner than DTLearner.  		  	   		 	   		  		  		    	 		 		   		 		  
     :rtype: numpy.ndarray  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	   		 	   		  		  		    	 		 		   		 		  
-    np.random.seed(seed)  		  	   		 	   		  		  		    	 		 		   		 		  
-    x = np.zeros((100, 2))  		  	   		 	   		  		  		    	 		 		   		 		  
-    y = np.random.random(size=(100,)) * 200 - 100  		  	   		 	   		  		  		    	 		 		   		 		  
-    # Here's is an example of creating a Y from randomly generated  		  	   		 	   		  		  		    	 		 		   		 		  
-    # X with multiple columns  		  	   		 	   		  		  		    	 		 		   		 		  
-    # y = x[:,0] + np.sin(x[:,1]) + x[:,2]**2 + x[:,3]**3  		  	   		 	   		  		  		    	 		 		   		 		  
+    np.random.seed(seed)
+    slope = np.random.random()
+    intercept = np.random.random()
+    # num_x = np.random.randint(2, 10 + 1)
+    # num_rows = np.random.randint(10, 1000 + 1)
+    num_x = 5
+    num_rows = 500
+    x = np.random.random(size=(num_rows, num_x))
+    y = (slope*x).sum(axis = 1) + intercept
+    # add some noise
+    y += np.random.normal(scale=0.5, size=num_rows)
     return x, y  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
-def best_4_dt(seed=1489683273):  		  	   		 	   		  		  		    	 		 		   		 		  
-    """  		  	   		 	   		  		  		    	 		 		   		 		  
-    Returns data that performs significantly better with DTLearner than LinRegLearner.  		  	   		 	   		  		  		    	 		 		   		 		  
-    The data set should include from 2 to 10 columns in X, and one column in Y.  		  	   		 	   		  		  		    	 		 		   		 		  
-    The data should contain from 10 (minimum) to 1000 (maximum) rows.  		  	   		 	   		  		  		    	 		 		   		 		  
-  		  	   		 	   		  		  		    	 		 		   		 		  
-    :param seed: The random seed for your data generation.  		  	   		 	   		  		  		    	 		 		   		 		  
-    :type seed: int  		  	   		 	   		  		  		    	 		 		   		 		  
-    :return: Returns data that performs significantly better with DTLearner than LinRegLearner.  		  	   		 	   		  		  		    	 		 		   		 		  
-    :rtype: numpy.ndarray  		  	   		 	   		  		  		    	 		 		   		 		  
-    """  		  	   		 	   		  		  		    	 		 		   		 		  
-    np.random.seed(seed)  		  	   		 	   		  		  		    	 		 		   		 		  
-    x = np.zeros((100, 2))  		  	   		 	   		  		  		    	 		 		   		 		  
-    y = np.random.random(size=(100,)) * 200 - 100  		  	   		 	   		  		  		    	 		 		   		 		  
-    return x, y  		  	   		 	   		  		  		    	 		 		   		 		  
+def best_4_dt(seed=903948218):
+    """
+    Returns data that performs significantly better with DTLearner than LinRegLearner.
+    The data set should include from 2 to 10 columns in X, and one column in Y.
+    The data should contain from 10 (minimum) to 1000 (maximum) rows.
+
+    :param seed: The random seed for your data generation.
+    :type seed: int
+    :return: Returns data that performs significantly better with DTLearner than LinRegLearner.
+    :rtype: numpy.ndarray
+    """
+    np.random.seed(seed)
+    # num_x = np.random.randint(2, 10 + 1)
+    # num_rows = np.random.randint(10, 1000 + 1)
+    num_x = 5
+    num_rows = 100
+    x = np.random.uniform(0, 10, size=(num_rows, num_x))
+    y = np.zeros(num_rows)
+
+    y += np.sum(x[:, 0])
+    y += (x[:, 1]) ** 2
+    y += np.sin(x[:, 2]) ** 10
+    y += np.exp(-x[:, 3])
+    y += 3 * (x[:, 4] ** 3) + 2 * np.cos(x[:, 4])
+
+    # Add noise
+    y += np.random.normal(scale=0.5, size=num_rows)
+    return x, y
   		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
 def author():  		  	   		 	   		  		  		    	 		 		   		 		  
@@ -75,7 +93,10 @@ def author():
     :return: The GT username of the student  		  	   		 	   		  		  		    	 		 		   		 		  
     :rtype: str  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	   		 	   		  		  		    	 		 		   		 		  
-    return "tb34"  # Change this to your user ID  		  	   		 	   		  		  		    	 		 		   		 		  
+    return "pravikumaran3"  # Change this to your user ID
+
+def study_group(self):
+    return('pravikumaran3')
   		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
 if __name__ == "__main__":  		  	   		 	   		  		  		    	 		 		   		 		  

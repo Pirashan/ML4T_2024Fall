@@ -34,7 +34,7 @@ def str2dt(strng):
 # Test cases  		  	   		 	   		  		  		    	 		 		   		 		  
 OptimizationTestCase = namedtuple(  		  	   		 	   		  		  		    	 		 		   		 		  
     "OptimizationTestCase", ["inputs", "outputs", "description"]  		  	   		 	   		  		  		    	 		 		   		 		  
-)  		  	   		 	   		  		  		    	 		 		   		 		  
+)
 optimization_test_cases = [  		  	   		 	   		  		  		    	 		 		   		 		  
     OptimizationTestCase(  		  	   		 	   		  		  		    	 		 		   		 		  
         inputs=dict(  		  	   		 	   		  		  		    	 		 		   		 		  
