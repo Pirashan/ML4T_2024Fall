@@ -21,9 +21,9 @@ GT honor code violation.
   		  	   		 	   		  		  		    	 		 		   		 		  
 -----do not edit anything above this line---  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
-Student Name: Pirashan Ravikumaran (replace with your name)  		  	   		 	   		  		  		    	 		 		   		 		  
-GT User ID: pravikumaran3 (replace with your User ID)  		  	   		 	   		  		  		    	 		 		   		 		  
-GT ID:  (replace with your GT ID)  		  	   		 	   		  		  		    	 		 		   		 		  
+Student Name: Pirashan Ravikumaran		  	   		 	   		  		  		    	 		 		   		 		  
+GT User ID: pravikumaran3	  	   		 	   		  		  		    	 		 		   		 		  
+GT ID: 903948218 		  	   		 	   		  		  		    	 		 		   		 		  
 """  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
 import datetime as dt  		  	   		 	   		  		  		    	 		 		   		 		  
@@ -63,7 +63,7 @@ def compute_portvals(
     # code should work correctly with either input
 
     #Read the data in from orders file
-    orders = pd.read_csv(orders_file, header=0, index_col='Date', parse_dates=True, na_values=['nan'])
+    orders = pd.read_csv(orders_file, index_col='Date', parse_dates=True, na_values=['nan'])
     # datetime format
     orders.index = pd.to_datetime(list(orders.index.values))
     # Sort by dates in descending order
@@ -79,8 +79,8 @@ def compute_portvals(
     # orders -> prices -> trades -> holdings -> values -> portfolio value
 
     # Get prices of symbols
-    prices = get_data(symbols, pd.date_range(start_date, end_date)).drop(columns=['SPY'])
-    # prices = prices[symbols]
+    prices = get_data(symbols, pd.date_range(start_date, end_date))
+    prices = prices[symbols]
     # Track cash column
     prices['Cash'] = 1.0
 
@@ -119,38 +119,6 @@ def compute_portvals(
     portvals = values.sum(axis=1)
 
     return portvals
-
-    # # Portfolio of stocks and cash values
-    # portfolio = pd.DataFrame(index=prices.index, columns=symbols + ['Cash'])
-    # portfolio.fillna(0, inplace=True)
-    # portfolio['Cash'].iloc[0] = start_val
-    #
-    # for index, row in orders.iterrows():
-    #     symbol = row['Symbol']
-    #     shares = row['Shares']
-    #     order_type = row['Order']
-    #
-    #     # If orders come in on non-trading days just drop them - EdStem #1786
-    #     if index not in prices.index:
-    #         continue
-    #
-    #     stock_price = prices.loc[index, symbol]
-    #
-    #     if order_type == 'BUY':
-    #         purchase_price = stock_price*(1+impact)
-    #         cash_spent = shares*purchase_price+commission
-    #         portfolio.loc[index:, 'Cash'] -= cash_spent
-    #         portfolio.loc[index:, symbol] += shares
-    #
-    #     elif order_type == 'SELL':
-    #         selling_price = stock_price * (1-impact)
-    #         cash_earned = shares * selling_price - commission
-    #         portfolio.loc[index:, 'Cash'] += cash_earned
-    #         portfolio.loc[index:, symbol] -= shares
-    #
-    # stock_values = portfolio[symbols].mul(prices[symbols], axis=0)
-    # total_stock_value = stock_values.sum(axis=1)
-    # portvals = total_stock_value + portfolio['Cash']
   		  	   		 	   		  		  		    	 		 		   		 		  
 def test_code():  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	   		 	   		  		  		    	 		 		   		 		  
