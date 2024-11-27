@@ -20,54 +20,23 @@ def studygroup():
     return 'pravikumaran3'
 
 def bollinger_bands(prices, symbol, window=20, num_std_dev=2):
-    prices = prices[symbol]
-
     # Calculate the rolling mean and rolling standard deviation
     rm = prices.rolling(window=window).mean()
     rstd = prices.rolling(window=window).std()
-
     # Calculate the upper and lower Bollinger Bands
     upper_band = rm + (rstd * num_std_dev)
     lower_band = rm - (rstd * num_std_dev)
     bb_value = (prices - rm)/(2*rstd)
     bb_percent = ((prices - lower_band) / (upper_band - lower_band)) * 100
 
-    # Plotting the Bollinger Bands
-    fig = plt.figure(figsize=(14, 7))
-    plt.plot(rm, label='SMA', color='blue')
-    plt.plot(prices, label='Prices', color='orange')
-    plt.plot(upper_band, label='Upper Bollinger Band', color='red')
-    plt.plot(lower_band, label='Lower Bollinger Band', color='green')
-    # plt.plot(bb_value, label='Bollinger Band Value', color='gray')
-    plt.fill_between(prices.index, lower_band, upper_band, color='lightgrey', alpha=0.2)
-    plt.title(f'{symbol} Bollinger Bands', fontsize=20)
-    plt.xlabel('Date', fontsize=16)
-    plt.ylabel('Price', fontsize=16)
-    plt.legend()
-    plt.grid()
-    plt.savefig("Bollinger_Bands.png")
-
-    # Plotting the BB%
-    fig = plt.figure(figsize=(14, 7))
-    plt.plot(bb_percent, label='Bollinger Band %', color='blue')
-    plt.axhline(y=0, color='black', linestyle='--')
-    plt.axhline(y=100, color='black', linestyle='--')
-    plt.title('Bollinger Band %', fontsize=20)
-    plt.xlabel('Date', fontsize=16)
-    plt.ylabel('BB%', fontsize=16)
-    plt.ylim(-30, 130)
-    plt.legend()
-    plt.grid()
-    # plt.text(0.5, 0.5, "pravikumaran3@gatech.edu", fontsize=30, rotation=50, color='gray',
-    #          alpha=0.5, ha='center', va='center', transform=fig.transFigure)
-    plt.savefig("BB%.png")
-
     return bb_percent
 
 def rsi (prices, symbol, lookback = 14):
     data = prices.copy()
+    if isinstance(data, pd.Series):  # Check if it's a Series (single column)
+        data = data.to_frame()
     # price changes
-    data['Price_Change'] = data[symbol].diff()
+    data['Price_Change'] = data.diff()
     # daily gains/losses separately (abs val)
     data['Gain'] = np.where(data['Price_Change'] > 0, data['Price_Change'], 0)
     data['Loss'] = np.where(data['Price_Change'] < 0, -data['Price_Change'], 0)
@@ -77,18 +46,6 @@ def rsi (prices, symbol, lookback = 14):
     # Relative Strength and Relative Strength Index
     data['RS'] = data['AG'] / data['AL']
     data['RSI'] = 100 - (100 / (1 + data['RS']))
-
-    # Plotting the RSI
-    fig = plt.figure(figsize=(14, 7))
-    plt.plot(data.index, data['RSI'], label=f'{symbol} RSI', color='blue')
-    plt.axhline(70, color='red', linestyle='--', label='Overbought (70)')
-    plt.axhline(30, color='green', linestyle='--', label='Oversold (30)')
-    plt.title(f'{symbol} RSI (Lookback = 14)', fontsize=20)
-    plt.xlabel('Date', fontsize=16)
-    plt.ylabel('RSI', fontsize=16)
-    plt.legend()
-    plt.grid()
-    plt.savefig("RSI.png")
 
     return data['RSI']
 
@@ -107,34 +64,17 @@ def stochastic_indicator(prices, symbol, lookback_k=14, lookback_d=3):
     crossover_signal = np.where(data['%K'] < data['%D'], -1, crossover_signal)  # -1 if %K is below %D
     crossover_signal = pd.Series(crossover_signal, index=data.index).fillna(0)  # Fill NaN values with 0
 
-    # Plot Stochastic
-    plt.figure(figsize=(14, 7))
-    plt.plot(data.index, data['%K'], label=f'{symbol} %K (14)', color='blue')
-    plt.plot(data.index, data['%D'], label=f'{symbol} %D (3)', color='red')
-    # Highlight crossovers
-    for i in range(1, len(crossover_signal)):
-        if crossover_signal[i] == 1 and crossover_signal[i - 1] != 1:
-            plt.plot(data.index[i], data['%K'][i], 'g^', markersize=10)  # Buy signal
-        elif crossover_signal[i] == -1 and crossover_signal[i - 1] != -1:
-            plt.plot(data.index[i], data['%K'][i], 'rv', markersize=10)  # Sell signal
-    plt.axhline(80, color='black', linestyle='--', label='Overbought (80)')
-    plt.axhline(20, color='black', linestyle='--', label='Oversold (20)')
-    plt.title(f'{symbol} Stochastic Oscillator', fontsize=20)
-    plt.xlabel('Date', fontsize=16)
-    plt.ylabel('Stochastic Value', fontsize=16)
-    plt.legend()
-    plt.grid()
-    plt.savefig("Stochastic.png")
-
     return crossover_signal
 
 def macd(prices, symbol, short_period = 12, long_period= 26, signal_period = 9):
     data = prices.copy()
+    if isinstance(data, pd.Series):  # Check if it's a Series (single column)
+        data = data.to_frame()
     #short-term EMA (12-day)
-    short_term_ema = data[symbol].ewm(span=short_period, min_periods=1).mean()
+    short_term_ema = data.ewm(span=short_period, min_periods=1).mean()
 
     #long-term EMA (26-day)
-    long_term_ema = data[symbol].ewm(span=long_period, min_periods=1).mean()
+    long_term_ema = data.ewm(span=long_period, min_periods=1).mean()
 
     #MACD line
     macd_line = short_term_ema - long_term_ema
@@ -150,23 +90,6 @@ def macd(prices, symbol, short_period = 12, long_period= 26, signal_period = 9):
     macd_results['MACD Line'] = macd_line
     macd_results['Signal Line'] = signal_line
     macd_results['Histogram'] = macd_histogram
-
-    # Plot MACD
-    plt.figure(figsize=(14, 7))
-    plt.plot(data.index, macd_results['MACD Line'], label=f'{symbol} MACD (12, 26)', color='blue', linewidth=1.5)
-    plt.plot(data.index, macd_results['Signal Line'], label=f'{symbol} Signal (9)', color='red', linestyle='--', linewidth=1.5)
-    positive_hist = macd_results['Histogram'] >= 0
-    negative_hist = macd_results['Histogram'] < 0
-    plt.bar(data.index[positive_hist], macd_results['Histogram'][positive_hist], color='green', alpha=0.6)
-    plt.bar(data.index[negative_hist], macd_results['Histogram'][negative_hist], color='red', alpha=0.6)
-    plt.title(f'{symbol} MACD', fontsize=20)
-    plt.xlabel('Date', fontsize=16)
-    plt.ylabel('MACD Value', fontsize=16)
-    plt.axhline(0, color='black', linestyle='--')
-    plt.legend()
-    plt.grid()
-    plt.savefig("MACD.png")
-
     macd_results = macd_results['Histogram']
     return macd_results
 
@@ -199,18 +122,6 @@ def cci(prices, symbol, lookback=20, high_prices=None, low_prices=None, close_pr
     cci_df = pd.DataFrame(index=prices.index)
     cci_df['CCI'] = cci
 
-    # Plotting the CCI
-    plt.figure(figsize=(14, 7))
-    plt.plot(data.index, cci_df['CCI'], label=f'{symbol} CCI (20)', color='blue')
-    plt.axhline(100, color='red', linestyle='--', label='Overbought (+100)')
-    plt.axhline(-100, color='green', linestyle='--', label='Oversold (-100)')
-    plt.title(f'{symbol} CCI (Lookback = 20)', fontsize=20)
-    plt.xlabel('Date', fontsize=16)
-    plt.ylabel('CCI Value', fontsize=16)
-    plt.legend()
-    plt.grid()
-    plt.savefig("CCI.png")
-
     return cci_df
 
 def test_code():
@@ -228,19 +139,21 @@ def test_code():
 
     # Bollinger Bands
     bb_percent = bollinger_bands(prices, symbol)
+    print(bb_percent)
 
     # RSI
     data = rsi(prices, symbol, lookback = 14)
+    print(data)
 
     # Stochastic
     data = stochastic_indicator(prices, symbol, lookback_k=14, lookback_d=3)
-
+    print(data)
     # MACD
     data = macd(prices, symbol, short_period = 12, long_period= 26, signal_period = 9)
-
+    print(data)
     # CCI
     data = cci(prices, symbol, lookback=20, high_prices=high_prices, low_prices=low_prices, close_prices=close_prices)
-
+    print(data)
 
 if __name__ == "__main__":
     test_code()
